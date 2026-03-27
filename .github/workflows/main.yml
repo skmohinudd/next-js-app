@@ -3,7 +3,7 @@ name: Test AWS OIDC Connection
 on:
   push:
     branches:
-      - demo-test
+      - main
 
 jobs:
   test-aws:
