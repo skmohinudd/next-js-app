@@ -4,24 +4,33 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test-aws:
+    name: Test AWS via OIDC
     runs-on: ubuntu-latest
 
     permissions:
-      id-token: write     # 🔥 mandatory for OIDC
+      id-token: write     # REQUIRED for OIDC
       contents: read
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Configure AWS Credentials
+      - name: Configure AWS Credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.IAM_ROLE_GITHUBACTIONS }}
           aws-region: us-east-1
 
-      - name: Test AWS Connection
-        run: aws sts get-caller-identity
+      - name: Verify AWS Identity
+        run: |
+          echo "Testing AWS connection..."
+          aws sts get-caller-identity
+
+      - name: List S3 Buckets (Permission Test)
+        run: |
+          echo "Listing S3 buckets..."
+          aws s3 ls
