@@ -1,0 +1,27 @@
+name: Test AWS OIDC Connection
+
+on:
+  push:
+    branches:
+      - demo-test
+
+jobs:
+  test-aws:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write     # 🔥 mandatory for OIDC
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.IAM_ROLE_GITHUBACTIONS }}
+          aws-region: us-east-1
+
+      - name: Test AWS Connection
+        run: aws sts get-caller-identity
